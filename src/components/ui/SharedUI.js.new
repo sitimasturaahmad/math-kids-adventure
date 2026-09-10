@@ -1,0 +1,221 @@
+function BigButton({
+  children,
+  onClick,
+  onPointerDown,
+  color = COLORS.sky,
+  className = "",
+  disabled,
+  ariaLabel,
+}) {
+  return (
+    <button
+      aria-label={ariaLabel}
+      disabled={disabled}
+      onPointerDown={() => {
+        if (!disabled && onPointerDown) onPointerDown();
+      }}
+      onClick={() => {
+        if (!disabled) {
+          SFX.click();
+          onClick && onClick();
+        }
+      }}
+      className={`select-none rounded-3xl font-bold text-white shadow-lg active:scale-95 transition-transform duration-150 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-white/60 border-2 border-white/30 ${className}`}
+      style={{ backgroundColor: color, boxShadow: `0 6px 0 rgba(0,0,0,0.15)` }}
+    >
+      {children}
+    </button>
+  );
+}
+function Mascot({ mood = "happy", size = "text-6xl" }) {
+  const face = mood === "happy" ? "🦉" : mood === "sad" ? "🦉" : "🦉";
+  return (
+    <div
+      className={`${size} animate-bounce-slow drop-shadow-lg`}
+      role="img"
+      aria-label="mascot owl"
+    >
+      {face}
+    </div>
+  );
+}
+function BrandLogo({ className = "w-40" }) {
+  return (
+    <img
+      src={MATH_VERSA_LOGO}
+      alt="Math Versa logo"
+      className={`animate-bounce-slow drop-shadow-lg ${className}`}
+    />
+  );
+}
+function ScreenShell({ children, dark }) {
+  return (
+    <div
+      className="flex-1 w-full flex flex-col items-center relative overflow-hidden"
+      style={{
+        background: dark
+          ? "linear-gradient(180deg,#1e1b4b 0%, #312e81 60%, #1e293b 100%)"
+          : "linear-gradient(180deg,#BAE6FD 0%, #E0F2FE 40%, #FEF9C3 100%)",
+      }}
+    >
+      <BackgroundDecor dark={dark} />
+      <div className="relative z-10 w-full flex flex-col items-center px-4 py-6 flex-1">
+        {children}
+      </div>
+    </div>
+  );
+}
+function BackgroundDecor({ dark }) {
+  // Light mode: a floating rainbow plus random single-digit numbers instead
+  // of clouds/balloons — recomputed once per mount so they don't jitter on
+  // every re-render (e.g. the game timer ticking).
+  const items = useMemo(() => {
+    if (dark) return ["✨", "⭐", "🌙", "✨", "⭐", "🌟"];
+    return ["🌈", ...Array.from({ length: 12 }, () => String(randInt(0, 9)))];
+  }, [dark]);
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {items.map((it, i) => (
+        <div
+          key={i}
+          className={`absolute opacity-70 animate-float ${dark || it === "🌈" ? "text-4xl" : `font-black ${i % 2 === 0 ? "text-sky-400/70" : "text-pink-400/70"}`}`}
+          style={{
+            left: `${(i * 17 + 5) % 92}%`,
+            top: `${(i * 23 + 4) % 80}%`,
+            animationDelay: `${i * 0.7}s`,
+            fontSize: `${1.5 + (i % 3) * 0.8}rem`,
+          }}
+        >
+          {it}
+        </div>
+      ))}
+    </div>
+  );
+}
+function TopBar({ onBack, title, right }) {
+  return (
+    <div className="w-full max-w-2xl flex items-center justify-between mb-4">
+      {onBack ? (
+        <button
+          onClick={() => {
+            SFX.click();
+            onBack();
+          }}
+          className="rounded-full bg-white/80 p-3 shadow active:scale-95 transition-transform"
+          aria-label="Back"
+        >
+          <ArrowLeft className="w-6 h-6 text-slate-700" />
+        </button>
+      ) : (
+        <div className="w-12" />
+      )}
+      <h1 className="text-xl md:text-2xl font-extrabold text-slate-800 text-center flex-1 truncate px-2">
+        {title}
+      </h1>
+      <div className="w-12 flex justify-end">{right}</div>
+    </div>
+  );
+}
+function CircularTimer({ total, timeLeft }) {
+  if (total <= 0)
+    return (
+      <div className="flex items-center gap-1 bg-white/80 rounded-full px-3 py-1 shadow font-bold text-slate-700">
+        <TimerIcon className="w-4 h-4" /> ∞
+      </div>
+    );
+  const pct = Math.max(0, timeLeft / total);
+  const r = 22,
+    c = 2 * Math.PI * r;
+  const color =
+    pct > 0.4 ? COLORS.green : pct > 0.15 ? COLORS.orange : "#EF4444";
+  return (
+    <div className="relative w-14 h-14">
+      <svg viewBox="0 0 56 56" className="w-14 h-14 -rotate-90">
+        <circle
+          cx="28"
+          cy="28"
+          r={r}
+          fill="none"
+          stroke="#ffffff90"
+          strokeWidth="6"
+        />
+        <circle
+          cx="28"
+          cy="28"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="6"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - pct)}
+          strokeLinecap="round"
+          style={{ transition: "stroke-dashoffset 1s linear, stroke 0.3s" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-slate-700">
+        {timeLeft}
+      </div>
+    </div>
+  );
+}
+function Confetti({ active }) {
+  const pieces = useMemo(
+    () =>
+      Array.from({ length: 28 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        color: [
+          COLORS.sky,
+          COLORS.yellow,
+          COLORS.green,
+          COLORS.orange,
+          COLORS.pink,
+        ][i % 5],
+        delay: Math.random() * 0.4,
+        dur: 1.2 + Math.random() * 0.8,
+        rot: Math.random() * 360,
+      })),
+    [active],
+  );
+  if (!active) return null;
+  return (
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      {pieces.map((p) => (
+        <div
+          key={p.id}
+          className="absolute top-[-5%] w-3 h-3 rounded-sm animate-confetti-fall"
+          style={{
+            left: `${p.left}%`,
+            backgroundColor: p.color,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.dur}s`,
+            transform: `rotate(${p.rot}deg)`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+function BalancedObjectRows({
+  count,
+  children,
+  className = "",
+  rowClassName = "gap-3",
+}) {
+  const [topCount, bottomCount] = splitBalancedRows(count);
+  const renderRow = (start, n) => (
+    <div
+      className={`flex flex-wrap items-center justify-center ${rowClassName}`}
+    >
+      {Array.from({ length: n }).map((_, i) => children(start + i))}
+    </div>
+  );
+  if (bottomCount === 0)
+    return <div className={className}>{renderRow(0, topCount)}</div>;
+  return (
+    <div className={`flex flex-col items-center gap-2 ${className}`}>
+      {renderRow(0, topCount)}
+      {renderRow(topCount, bottomCount)}
+    </div>
+  );
+}

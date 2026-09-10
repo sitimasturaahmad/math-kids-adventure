@@ -1,0 +1,116 @@
+import { useState, useEffect } from "react";
+import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { COLORS, CATEGORIES } from "@/lib/constants";
+import { SFX, TWINKLE_MELODY, loopPattern } from "@/lib/audio";
+import { BigButton, ScreenShell, TopBar, Confetti } from "@/components/ui/SharedUI";
+import { LearnNumberIntro, LearnNumberObjectsIntro, LearnCountIntro, LearnAdditionIntro } from "@/components/learn/LearnStepsBasic";
+import { LearnSubtractionIntro, LearnSwatchIntro, LearnDoublesIntro } from "@/components/learn/LearnStepsAdvanced";
+
+
+/* ============================== LEARN SCREEN =============================== */
+export function LearnScreen({
+  t,
+  dark,
+  lang,
+  voiceOn,
+  musicOn,
+  category,
+  steps,
+  index,
+  onNext,
+  onPrev,
+  onExit,
+  onFinish,
+}) {
+  const step = steps[index];
+  const isFirst = index === 0;
+  const isLast = index === steps.length - 1;
+  const cat = CATEGORIES.find((c) => c.id === category);
+  const [celebrate, setCelebrate] = useState(false);
+
+  // Background music for Learn mode: "Twinkle, Twinkle, Little Star",
+  // played softly — same gentle tune for every category.
+  useEffect(() => {
+    if (!musicOn) return;
+    return loopPattern(TWINKLE_MELODY);
+  }, [musicOn, category]);
+
+  const handleNext = () => {
+    if (isLast) {
+      SFX.learnComplete();
+      setCelebrate(true);
+      setTimeout(onFinish, 1800);
+    } else {
+      SFX.click();
+      onNext();
+    }
+  };
+
+  if (!step) return null;
+
+  return (
+    <ScreenShell dark={dark}>
+      <Confetti active={celebrate} />
+      <TopBar
+        onBack={onExit}
+        title={
+          category === "bonus" ? t.bonusTitle : cat ? t[cat.labelKey] : t.learn
+        }
+      />
+      {category === "bonus" && (
+        <div className="w-full max-w-2xl bg-yellow-100 border-2 border-yellow-300 rounded-2xl px-4 py-2 mb-3 text-center">
+          <p className="text-xs font-bold text-yellow-800">📌 {t.parentNote}</p>
+        </div>
+      )}
+      <div className="w-full max-w-2xl h-2 bg-white/60 rounded-full overflow-hidden mb-4 shadow-inner">
+        <div
+          className="h-full rounded-full transition-all duration-500"
+          style={{
+            width: `${((index + 1) / steps.length) * 100}%`,
+            backgroundColor: COLORS.green,
+          }}
+        />
+      </div>
+      <div className="w-full max-w-2xl flex-1 flex flex-col items-center justify-center">
+        {step.kind === "numberIntro" && (
+          <LearnNumberIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+        {step.kind === "numberIntroObjects" && (
+          <LearnNumberObjectsIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+        {step.kind === "countIntro" && (
+          <LearnCountIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+        {step.kind === "additionIntro" && (
+          <LearnAdditionIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+        {step.kind === "subtractionIntro" && (
+          <LearnSubtractionIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+        {step.kind === "swatchIntro" && (
+          <LearnSwatchIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+        {step.kind === "doublesIntro" && (
+          <LearnDoublesIntro step={step} lang={lang} voiceOn={voiceOn} />
+        )}
+      </div>
+      <div className="flex gap-3 w-full max-w-sm mt-4">
+        <BigButton
+          color="#94A3B8"
+          disabled={isFirst}
+          onClick={onPrev}
+          className="flex-1 py-4 flex items-center justify-center gap-1"
+        >
+          <ChevronLeft className="w-5 h-5" /> {t.previous}
+        </BigButton>
+        <BigButton
+          color={COLORS.green}
+          onClick={handleNext}
+          className="flex-1 py-4 flex items-center justify-center gap-1"
+        >
+          {t.next} <ChevronRight className="w-5 h-5" />
+        </BigButton>
+      </div>
+    </ScreenShell>
+  );
+}

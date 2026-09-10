@@ -1,0 +1,471 @@
+import { COLORS, SHAPES_LIST, COLORS_LIST, OBJECT_EMOJI, OBJECT_COLOR_GROUPS } from "@/lib/constants";
+import { randInt, shuffle, uniqueChoices, numRangeForDifficulty, subtractionRanges, additionRanges, wordFor } from "@/lib/utils";
+
+
+// Returns an array of question objects for a full session pool.
+export function generateQuestionPool(category, difficulty, count, lang) {
+  const pool = [];
+  const [lo, hi] = numRangeForDifficulty(category, difficulty);
+  const qTypesRotation = ["multiple", "fill", "matching", "dragdrop"];
+
+  for (let i = 0; i < count; i++) {
+    const qType = qTypesRotation[i % qTypesRotation.length];
+    pool.push(makeQuestion(category, difficulty, qType, lo, hi, lang));
+  }
+  return pool;
+}
+
+
+export function makeQuestion(category, difficulty, qType, lo, hi, lang) {
+  const id = Math.random().toString(36).slice(2);
+
+  if (category === "numbers") {
+    // Always shows exactly two of the three number representations
+    // (digit, object picture, spelled word) as the "given" info, and quizzes
+    // the third — e.g. show "3" + three apples, then quiz the word; or show
+    // "FOUR" + four balls, then quiz the digit; or show "1" + "ONE" together
+    // (no objects) and quiz a matching quantity picture instead.
+    const answer = randInt(lo, hi);
+    const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+    const variant = ["digitWord", "digitObjects", "objectsWord"][randInt(0, 2)];
+    const answerType =
+      variant === "digitWord"
+        ? "objects"
+        : variant === "digitObjects"
+          ? "word"
+          : "digit";
+    const choiceNums = uniqueChoices(
+      answer,
+      Math.max(1, lo),
+      Math.max(hi, answer + 2),
+      3,
+    );
+    // The spoken/shown prompt matches what's actually being asked in each
+    // variant, since "How many is this?" only makes sense when there are
+    // objects on screen to count.
+    const prompt =
+      variant === "digitWord"
+        ? lang === "ms"
+          ? "Pilih gambar dengan jumlah yang sama"
+          : "Pick the picture with the same amount"
+        : lang === "ms"
+          ? "Berapa banyak yang anda lihat?"
+          : "How many is this?";
+    return {
+      id,
+      type: "numshow",
+      category,
+      difficulty,
+      variant,
+      answerType,
+      count: answer,
+      emoji,
+      correctAnswer: answerType === "word" ? wordFor(answer, lang) : answer,
+      choices:
+        answerType === "word"
+          ? shuffle(choiceNums.map((n) => wordFor(n, lang)))
+          : choiceNums,
+      prompt,
+    };
+  }
+
+  if (category === "subtraction") {
+    // Three levels: Easy (both numbers up to 5), Medium (both up to 10),
+    // and Hard (first number up to 15, second number up to 9). Always a
+    // direct full equation with a picture of objects — never a blank in
+    // the middle (e.g. never "5 - _ = 4"). The child taps objects
+    // themselves to cross them out, then picks the answer.
+    const { aMax, bMax } = subtractionRanges(difficulty);
+    const a = randInt(1, aMax);
+    const b = randInt(1, Math.min(bMax, a)); // keep b <= a so the answer is never negative
+    const answer = a - b;
+    const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+    return {
+      id,
+      type: "subvisual",
+      category,
+      difficulty,
+      prompt: `${a} − ${b} = ?`,
+      // Spoken as number WORDS, not raw digits — a bare digit embedded in a
+      // BM sentence can still get read with English numeral pronunciation
+      // by the fallback voice when no Malay voice is installed.
+      spoken:
+        lang === "ms"
+          ? `${wordFor(a, lang)} tolak ${wordFor(b, lang)}, apakah jawapannya?`
+          : `${wordFor(a, lang)} minus ${wordFor(b, lang)}, what's the answer?`,
+      correctAnswer: answer,
+      choices: uniqueChoices(answer, 0, aMax, 3),
+      total: a,
+      remove: b,
+      emoji,
+    };
+  }
+
+  if (category === "addition") {
+    // Always a direct full equation (never "1 + _ = 2"), always paired with
+    // a picture of the two object groups being combined.
+    const { aLo, aHi, bLo, bHi } = additionRanges(difficulty);
+    const a = randInt(aLo, aHi),
+      b = randInt(bLo, bHi);
+    const answer = a + b;
+    const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+    return {
+      id,
+      type: "addvisual",
+      category,
+      difficulty,
+      prompt: `${a} + ${b} = ?`,
+      spoken:
+        lang === "ms"
+          ? `${wordFor(a, lang)} tambah ${wordFor(b, lang)}, apakah jawapannya?`
+          : `${wordFor(a, lang)} plus ${wordFor(b, lang)}, what's the answer?`,
+      correctAnswer: answer,
+      choices: uniqueChoices(answer, 0, aHi + bHi, 3),
+      groupA: a,
+      groupB: b,
+      emoji,
+    };
+  }
+
+  if (category === "counting") {
+    // Interactive tap-to-count game: child taps each fruit one at a time and
+    // hears "one, two, three..." for the ones not yet tapped, building
+    // one-to-one counting correspondence, then picks the total from 4 choices.
+    const answer = randInt(lo, hi);
+    const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+    return {
+      id,
+      type: "counttap",
+      category,
+      difficulty,
+      prompt:
+        lang === "ms"
+          ? "Berapa banyak yang anda lihat?"
+          : "How many do you see?",
+      count: answer,
+      emoji,
+      correctAnswer: answer,
+      choices: uniqueChoices(
+        answer,
+        Math.max(1, lo),
+        Math.max(hi, answer + 2),
+        4,
+      ),
+    };
+  }
+
+  if (category === "shapes") {
+    const shape = SHAPES_LIST[randInt(0, SHAPES_LIST.length - 1)];
+    const others = shuffle(SHAPES_LIST.filter((s) => s !== shape)).slice(0, 2);
+    const finalType =
+      qType === "fill" || qType === "dragdrop" ? "multiple" : qType;
+    return {
+      id,
+      type: finalType,
+      category,
+      difficulty,
+      prompt: lang === "ms" ? "Kenal pasti bentuk ini" : "What shape is this?",
+      display: shape.emoji,
+      correctAnswer: shape.name[lang],
+      choices: shuffle([shape, ...others].map((s) => s.name[lang])),
+      matchItems: buildShapeMatchItems(lang),
+      instruction: instructionFor(finalType, lang),
+    };
+  }
+
+  // colors
+  const color = COLORS_LIST[randInt(0, COLORS_LIST.length - 1)];
+  const others = shuffle(COLORS_LIST.filter((c) => c !== color)).slice(0, 2);
+  const finalType =
+    qType === "fill" || qType === "dragdrop" ? "multiple" : qType;
+  if (finalType === "matching") {
+    // Three different matching mini-games, picked randomly: match the color
+    // word to its swatch, match two different objects sharing a color, or
+    // match a colored object to its correct color word.
+    const variant = ["swatch", "objectObject", "objectWord"][randInt(0, 2)];
+    const prompts = {
+      swatch:
+        lang === "ms"
+          ? "Padankan warna dengan perkataannya"
+          : "Match the color to its word",
+      objectObject:
+        lang === "ms"
+          ? "Padankan objek dengan warna yang sama"
+          : "Match objects with the same color",
+      objectWord:
+        lang === "ms"
+          ? "Padankan objek berwarna dengan ejaan warnanya"
+          : "Match the colored object to its color word",
+    };
+    const items =
+      variant === "swatch"
+        ? buildColorMatchItems(lang)
+        : variant === "objectObject"
+          ? buildObjectColorMatchItems()
+          : buildObjectWordColorMatchItems(lang);
+    return {
+      id,
+      type: "matching",
+      category,
+      difficulty,
+      prompt: prompts[variant],
+      matchItems: items,
+      instruction: instructionFor("matching", lang),
+    };
+  }
+  return {
+    id,
+    type: finalType,
+    category,
+    difficulty,
+    prompt: lang === "ms" ? "Kenal pasti warna ini" : "What color is this?",
+    display: color.emoji,
+    correctAnswer: color.name[lang],
+    choices: shuffle([color, ...others].map((c) => c.name[lang])),
+    instruction: instructionFor(finalType, lang),
+  };
+}
+
+
+// Short spoken/visual instruction shown for question styles that need
+// extra guidance for pre-readers (drag & drop / matching).
+export function instructionFor(type, lang) {
+  if (type === "dragdrop")
+    return lang === "ms"
+      ? "Tarik jawapan ke dalam kotak."
+      : "Drag the answer into the box.";
+  if (type === "matching")
+    return lang === "ms"
+      ? "Padankan jawapan yang betul."
+      : "Match the correct answer.";
+  return "";
+}
+
+
+// Numbers/Counting Learn levels use a different range split than PLAY:
+// easy 1-5, medium 6-10, hard 11-20. (Still used by Counting Learn below —
+// Numbers Learn now uses its own 1-10 / 11-20 / tens level scheme instead.)
+export function learnNumberRange(difficulty) {
+  if (difficulty === "easy") return [1, 5];
+  if (difficulty === "medium") return [6, 10];
+  return [11, 20];
+}
+
+
+// NUMBERS learn levels: "1-10" (with counting objects), "11-20", and
+// "tens" (10, 20, 30 ... 100) — digit + word only for the latter two.
+export function numbersLearnLevelRange(level) {
+  if (level === "1-10") return { start: 1, end: 10, step: 1 };
+  if (level === "11-20") return { start: 11, end: 20, step: 1 };
+  return { start: 10, end: 100, step: 10 }; // "tens"
+}
+
+
+// NUMBERS learn: introduces each number in order. For 1-10, each number
+// also gets a set of tappable objects to count (the child taps each one to
+// hear it counted and see it grow); 11-20 and the tens are digit + word only.
+export function generateNumbersLearnSteps(level, lang) {
+  const { start, end, step } = numbersLearnLevelRange(level);
+  const steps = [];
+  for (let n = start; n <= end; n += step) {
+    if (level === "1-10" || level === "11-20") {
+      const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+      steps.push({
+        kind: "numberIntroObjects",
+        count: n,
+        word: wordFor(n, lang),
+        emoji,
+      });
+    } else {
+      steps.push({ kind: "numberIntro", count: n, word: wordFor(n, lang) });
+    }
+  }
+  return steps;
+}
+
+
+// COUNTING learn: for each number in order, first shows just the number
+// alone (spoken), then shows 5 different objects each counted up one at a
+// time (auto-animated, not tapped), each growing and staying big as counted.
+export function generateCountingLearnSteps(difficulty, lang) {
+  const [lo, hi] = learnNumberRange(difficulty);
+  // Fewer worked examples per number as the range gets bigger: 1-5 gets 5
+  // examples, 6-10 gets 3, 11-20 gets just 1.
+  const exampleCount =
+    difficulty === "easy" ? 5 : difficulty === "medium" ? 3 : 1;
+  const steps = [];
+  for (let n = lo; n <= hi; n++) {
+    const objects = shuffle(OBJECT_EMOJI).slice(0, exampleCount);
+    steps.push({ kind: "countIntro", count: n, objects });
+  }
+  return steps;
+}
+
+
+// ADDITION learn: introduces a curated set of addition facts in order.
+// easy: both addends 1-4, sum never exceeds 5.
+// medium: first addend 6-9, sum never exceeds 10.
+// hard: one addend 4-6, the other 6-11 (order shuffled), sum never exceeds
+// 12 — 10 random examples.
+export function generateAdditionLearnSteps(difficulty, lang) {
+  let pairs = [];
+  if (difficulty === "easy") {
+    for (let b = 1; b <= 3; b++) {
+      for (let a = 1; a <= 5 - b; a++) pairs.push([a, b]);
+    }
+  } else if (difficulty === "medium") {
+    for (let a = 6; a <= 9; a++) {
+      for (let b = 1; a + b <= 10; b++) pairs.push([a, b]);
+    }
+  } else {
+    const combos = [];
+    for (let x = 4; x <= 6; x++) {
+      for (let y = 6; y <= 11; y++) {
+        if (x + y <= 12) combos.push([x, y]);
+      }
+    }
+    // Each combo can appear with either number first — shuffle both orders
+    // together, then take 10.
+    const withSwaps = [];
+    combos.forEach(([x, y]) => {
+      withSwaps.push([x, y]);
+      if (x !== y) withSwaps.push([y, x]);
+    });
+    pairs = shuffle(withSwaps).slice(0, 10);
+  }
+  return pairs.map(([a, b]) => {
+    const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+    return { kind: "additionIntro", a, b, answer: a + b, emoji, difficulty };
+  });
+}
+
+
+// SUBTRACTION learn: mirrors the addition walkthrough — every fact within
+// the level's number range (Easy: up to 5, Medium: up to 10), objects taken
+// away one at a time, then the remaining amount is announced.
+export function generateSubtractionLearnSteps(difficulty, lang) {
+  const { aMax, bMax } = subtractionRanges(difficulty);
+  const pairs = [];
+  for (let a = 1; a <= aMax; a++) {
+    for (let b = 1; b <= Math.min(bMax, a); b++) pairs.push([a, b]);
+  }
+  // Easy has few enough combinations to show in full, in order. Medium and
+  // Hard have far more, so a random sample keeps the walkthrough a
+  // reasonable length while still covering the full spread of numbers.
+  const chosen = difficulty === "easy" ? pairs : shuffle(pairs).slice(0, 12);
+  const emoji = OBJECT_EMOJI[randInt(0, OBJECT_EMOJI.length - 1)];
+  return chosen.map(([a, b]) => ({
+    kind: "subtractionIntro",
+    total: a,
+    remove: b,
+    answer: a - b,
+    emoji,
+  }));
+}
+
+
+// COLORS / SHAPES learn: simple sequential flashcards, same idea as Numbers.
+export function generateColorsLearnSteps() {
+  return COLORS_LIST.map((c) => ({
+    kind: "swatchIntro",
+    emoji: c.emoji,
+    name: c.name,
+  }));
+}
+
+export function generateShapesLearnSteps() {
+  return SHAPES_LIST.map((s) => ({
+    kind: "swatchIntro",
+    emoji: s.emoji,
+    name: s.name,
+  }));
+}
+
+
+// BONUS: "doubles" facts (1+1 through 10+10) for kids to memorise — a fixed
+// list, always in the same order, not randomized like the other categories.
+export function generateMemoriseSteps() {
+  return Array.from({ length: 10 }, (_, i) => {
+    const n = i + 1;
+    return { kind: "doublesIntro", a: n, b: n, answer: n + n };
+  });
+}
+
+
+export function generateLearnSteps(category, difficulty, lang) {
+  if (category === "numbers")
+    return generateNumbersLearnSteps(difficulty, lang);
+  if (category === "counting")
+    return generateCountingLearnSteps(difficulty, lang);
+  if (category === "addition")
+    return generateAdditionLearnSteps(difficulty, lang);
+  if (category === "subtraction")
+    return generateSubtractionLearnSteps(difficulty, lang);
+  if (category === "colors") return generateColorsLearnSteps();
+  if (category === "shapes") return generateShapesLearnSteps();
+  if (category === "bonus") return generateMemoriseSteps();
+  return [];
+}
+
+// Categories whose Learn mode has easy/medium/hard levels (numbers, counting,
+// addition). The rest (subtraction, colors, shapes) go straight into Learn.
+export const LEARN_HAS_LEVELS = ["numbers", "counting", "addition", "subtraction"];
+
+
+export function buildMatchItems(_answer, emoji, lo, hi) {
+  const nums = shuffle([
+    ...new Set([randInt(1, 5), randInt(1, 5), randInt(1, 5)]),
+  ]).slice(0, 3);
+  const uniqueNums = [...new Set(nums)];
+  while (uniqueNums.length < 3) {
+    const n = randInt(1, 6);
+    if (!uniqueNums.includes(n)) uniqueNums.push(n);
+  }
+  return uniqueNums.map((n) => ({
+    left: String(n),
+    right: emoji.repeat(n),
+    key: n,
+  }));
+}
+
+export function buildShapeMatchItems(lang) {
+  const picks = shuffle(SHAPES_LIST).slice(0, 3);
+  return picks.map((s) => ({
+    left: s.name[lang],
+    right: s.emoji,
+    key: s.name.en,
+  }));
+}
+
+export function buildColorMatchItems(lang) {
+  const picks = shuffle(COLORS_LIST).slice(0, 3);
+  return picks.map((s) => ({
+    left: s.name[lang],
+    right: s.emoji,
+    key: s.name.en,
+  }));
+}
+
+// Picks 3 random color groups (out of all available) each round for
+// variety, then for each picks 2 different objects sharing it — the child
+// matches object-to-object by shared color rather than reading a word.
+export function buildObjectColorMatchItems() {
+  const colorKeys = shuffle(Object.keys(OBJECT_COLOR_GROUPS)).slice(0, 3);
+  return colorKeys.map((key) => {
+    const group = shuffle(OBJECT_COLOR_GROUPS[key]).slice(0, 2);
+    return { left: group[0], right: group[1] || group[0], key };
+  });
+}
+
+// Picks 3 random color groups, and for each pairs one (tinted) object with
+// the correct color word — e.g. a red apple matched with the word "Red".
+export function buildObjectWordColorMatchItems(lang) {
+  const colorKeys = shuffle(Object.keys(OBJECT_COLOR_GROUPS)).slice(0, 3);
+  return colorKeys.map((key) => {
+    const group = OBJECT_COLOR_GROUPS[key];
+    const obj = group[randInt(0, group.length - 1)];
+    const colorEntry = COLORS_LIST.find((c) => c.name.en.toLowerCase() === key);
+    const wordLabel = colorEntry ? colorEntry.name[lang] : key;
+    return { left: obj, right: wordLabel, key };
+  });
+}

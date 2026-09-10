@@ -1,0 +1,46 @@
+const LS_STUDENTS = "mka_students_v1";
+const LS_SETTINGS = "mka_settings_v1";
+const LS_SESSION = "mka_session_v1_";
+const storage = {
+  loadStudents: () => {
+    try {
+      return JSON.parse(localStorage.getItem(LS_STUDENTS)) || [];
+    } catch {
+      return [];
+    }
+  },
+  saveStudents: (s) => {
+    try {
+      localStorage.setItem(LS_STUDENTS, JSON.stringify(s));
+    } catch {}
+  },
+  loadSettings: () => {
+    try {
+      return JSON.parse(localStorage.getItem(LS_SETTINGS)) || null;
+    } catch {
+      return null;
+    }
+  },
+  saveSettings: (s) => {
+    try {
+      localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
+    } catch {}
+  },
+  loadSession: (id) => {
+    try {
+      return JSON.parse(localStorage.getItem(LS_SESSION + id)) || null;
+    } catch {
+      return null;
+    }
+  },
+  saveSession: (id, s) => {
+    try {
+      localStorage.setItem(LS_SESSION + id, JSON.stringify(s));
+    } catch {}
+  },
+  clearSession: (id) => {
+    try {
+      localStorage.removeItem(LS_SESSION + id);
+    } catch {}
+  },
+};

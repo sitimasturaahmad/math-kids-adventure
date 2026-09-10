@@ -1,0 +1,680 @@
+[
+  {
+    "name": "COLORS",
+    "start": 71,
+    "end": 79,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "PIE_COLORS",
+    "start": 80,
+    "end": 86,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "STRINGS",
+    "start": 89,
+    "end": 256,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "PRAISE_WORDS",
+    "start": 260,
+    "end": 284,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "randomPraise",
+    "start": 285,
+    "end": 288,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "AVATARS",
+    "start": 290,
+    "end": 290,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "CATEGORIES",
+    "start": 292,
+    "end": 304,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "SINGLE_LEVEL_CATEGORIES",
+    "start": 307,
+    "end": 307,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "SHAPES_LIST",
+    "start": 309,
+    "end": 319,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "CUSTOM_SHAPE_COLORS",
+    "start": 323,
+    "end": 329,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "ShapeGlyph",
+    "start": 330,
+    "end": 382,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "COLORS_LIST",
+    "start": 387,
+    "end": 398,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "OBJECT_EMOJI",
+    "start": 401,
+    "end": 413,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "OBJECT_COLOR_GROUPS",
+    "start": 419,
+    "end": 425,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "OBJECT_NAMES",
+    "start": 428,
+    "end": 440,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "COLOR_KEY_LABEL",
+    "start": 441,
+    "end": 447,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "MKA_TINT_COLORS",
+    "start": 450,
+    "end": 456,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "objectColorPhrase",
+    "start": 458,
+    "end": 464,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "ACHIEVEMENTS",
+    "start": 466,
+    "end": 503,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "audioCtx",
+    "start": 507,
+    "end": 507,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "getCtx",
+    "start": 508,
+    "end": 514,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "beep",
+    "start": 515,
+    "end": 528,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "pianoNote",
+    "start": 533,
+    "end": 551,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "SFX",
+    "start": 552,
+    "end": 579,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "TWINKLE_MELODY",
+    "start": 589,
+    "end": 632,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "loopPattern",
+    "start": 637,
+    "end": 652,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "cachedVoices",
+    "start": 661,
+    "end": 661,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "voiceEngineUnlocked",
+    "start": 662,
+    "end": 662,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "refreshVoices",
+    "start": 663,
+    "end": 671,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "unlockVoiceEngine",
+    "start": 679,
+    "end": 687,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "speak",
+    "start": 688,
+    "end": 707,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "estimateSpeechMs",
+    "start": 711,
+    "end": 715,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "narrateQuestion",
+    "start": 720,
+    "end": 736,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LS_STUDENTS",
+    "start": 739,
+    "end": 739,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "LS_SETTINGS",
+    "start": 740,
+    "end": 740,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "LS_SESSION",
+    "start": 741,
+    "end": 741,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "storage",
+    "start": 743,
+    "end": 785,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "randInt",
+    "start": 788,
+    "end": 790,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "shuffle",
+    "start": 791,
+    "end": 793,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "uniqueChoices",
+    "start": 794,
+    "end": 801,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "numRangeForDifficulty",
+    "start": 806,
+    "end": 820,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "subtractionRanges",
+    "start": 826,
+    "end": 830,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "additionRanges",
+    "start": 835,
+    "end": 839,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "NUMBER_WORDS",
+    "start": 841,
+    "end": 886,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "NUMBER_WORDS_EXT",
+    "start": 889,
+    "end": 950,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "wordFor",
+    "start": 951,
+    "end": 955,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "numberSpeech",
+    "start": 961,
+    "end": 964,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "doublesWord",
+    "start": 968,
+    "end": 970,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateQuestionPool",
+    "start": 973,
+    "end": 983,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "makeQuestion",
+    "start": 985,
+    "end": 1193,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "instructionFor",
+    "start": 1197,
+    "end": 1207,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "learnNumberRange",
+    "start": 1217,
+    "end": 1221,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "numbersLearnLevelRange",
+    "start": 1225,
+    "end": 1229,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateNumbersLearnSteps",
+    "start": 1234,
+    "end": 1251,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateCountingLearnSteps",
+    "start": 1256,
+    "end": 1268,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateAdditionLearnSteps",
+    "start": 1275,
+    "end": 1305,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateSubtractionLearnSteps",
+    "start": 1310,
+    "end": 1328,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateColorsLearnSteps",
+    "start": 1331,
+    "end": 1337,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateShapesLearnSteps",
+    "start": 1338,
+    "end": 1344,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateMemoriseSteps",
+    "start": 1348,
+    "end": 1353,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "generateLearnSteps",
+    "start": 1355,
+    "end": 1368,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LEARN_HAS_LEVELS",
+    "start": 1371,
+    "end": 1371,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "buildMatchItems",
+    "start": 1373,
+    "end": 1387,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "buildShapeMatchItems",
+    "start": 1388,
+    "end": 1395,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "buildColorMatchItems",
+    "start": 1396,
+    "end": 1403,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "buildObjectColorMatchItems",
+    "start": 1407,
+    "end": 1413,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "buildObjectWordColorMatchItems",
+    "start": 1416,
+    "end": 1425,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "BigButton",
+    "start": 1428,
+    "end": 1456,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "MATH_VERSA_LOGO",
+    "start": 1458,
+    "end": 1459,
+    "type": "VariableDeclaration"
+  },
+  {
+    "name": "Mascot",
+    "start": 1461,
+    "end": 1472,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "BrandLogo",
+    "start": 1475,
+    "end": 1483,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "ScreenShell",
+    "start": 1485,
+    "end": 1501,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "BackgroundDecor",
+    "start": 1503,
+    "end": 1529,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "TopBar",
+    "start": 1531,
+    "end": 1554,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "CircularTimer",
+    "start": 1557,
+    "end": 1598,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "Confetti",
+    "start": 1601,
+    "end": 1638,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "splitBalancedRows",
+    "start": 1643,
+    "end": 1647,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "BalancedObjectRows",
+    "start": 1648,
+    "end": 1670,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "MathKidsAdventure",
+    "start": 1673,
+    "end": 2112,
+    "type": "ExportDefaultDeclaration"
+  },
+  {
+    "name": "MainMenu",
+    "start": 2115,
+    "end": 2245,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "ProfilesScreen",
+    "start": 2248,
+    "end": 2419,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "CategoriesScreen",
+    "start": 2422,
+    "end": 2493,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "ModeChoiceScreen",
+    "start": 2496,
+    "end": 2571,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "DifficultyScreen",
+    "start": 2573,
+    "end": 2642,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "NumbersLevelScreen",
+    "start": 2647,
+    "end": 2700,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "NumbersTableScreen",
+    "start": 2704,
+    "end": 2750,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "TimerScreen",
+    "start": 2755,
+    "end": 2781,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnScreen",
+    "start": 2784,
+    "end": 2889,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnNumberIntro",
+    "start": 2892,
+    "end": 2914,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnNumberObjectsIntro",
+    "start": 2918,
+    "end": 2984,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnCountIntro",
+    "start": 2988,
+    "end": 3079,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnAdditionIntro",
+    "start": 3098,
+    "end": 3264,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnSubtractionIntro",
+    "start": 3274,
+    "end": 3430,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnSwatchIntro",
+    "start": 3433,
+    "end": 3455,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LearnDoublesIntro",
+    "start": 3459,
+    "end": 3484,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "GameScreen",
+    "start": 3487,
+    "end": 3779,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "QuestionRenderer",
+    "start": 3782,
+    "end": 3832,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "QuestionPrompt",
+    "start": 3837,
+    "end": 3850,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "MultipleChoiceQ",
+    "start": 3852,
+    "end": 3891,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "FillBlankQ",
+    "start": 3893,
+    "end": 3922,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "MatchingQ",
+    "start": 3924,
+    "end": 4042,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "DragDropQ",
+    "start": 4044,
+    "end": 4121,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "CountingTapQ",
+    "start": 4126,
+    "end": 4210,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "NumbersQ",
+    "start": 4221,
+    "end": 4383,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "SubtractionVisualQ",
+    "start": 4389,
+    "end": 4470,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "AdditionVisualQ",
+    "start": 4477,
+    "end": 4575,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "FeedbackPanel",
+    "start": 4577,
+    "end": 4599,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "LeaderboardScreen",
+    "start": 4602,
+    "end": 4644,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "DashboardScreen",
+    "start": 4647,
+    "end": 4761,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "StatCard",
+    "start": 4763,
+    "end": 4774,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "ChartCard",
+    "start": 4775,
+    "end": 4782,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "SettingsScreen",
+    "start": 4785,
+    "end": 4873,
+    "type": "FunctionDeclaration"
+  },
+  {
+    "name": "SettingRow",
+    "start": 4875,
+    "end": 4892,
+    "type": "FunctionDeclaration"
+  }
+]

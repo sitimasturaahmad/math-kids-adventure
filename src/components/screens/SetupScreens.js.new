@@ -1,0 +1,128 @@
+function NumbersLevelScreen({ t, dark, onBack, onPick, lang, voiceOn }) {
+  // Each level has a separate `spoken` phrase from its visual `label` — a
+  // raw "1 - 100" style label read literally by TTS comes out garbled
+  // (e.g. "One One Hundred"), so the voice gets a proper sentence instead.
+  const levels = [
+    {
+      id: "1-10",
+      label: "1 - 10",
+      spoken: { en: "One to Ten", ms: "Satu ke Sepuluh" },
+      color: COLORS.green,
+    },
+    {
+      id: "11-20",
+      label: "11 - 20",
+      spoken: { en: "Eleven to Twenty", ms: "Sebelas ke Dua Puluh" },
+      color: COLORS.orange,
+    },
+    {
+      id: "tens",
+      label: "10 - 100",
+      spoken: { en: "Ten to One Hundred", ms: "Sepuluh ke Seratus" },
+      color: COLORS.pink,
+    },
+    {
+      id: "1-100",
+      label: "1 - 100",
+      spoken: { en: "One to One Hundred", ms: "Satu ke Seratus" },
+      color: COLORS.sky,
+    },
+  ];
+  useEffect(() => {
+    if (voiceOn) speak(t.chooseDifficulty, lang);
+  }, []);
+  return (
+    <ScreenShell dark={dark}>
+      <TopBar onBack={onBack} title={t.chooseDifficulty} />
+      <div className="w-full max-w-sm flex flex-col gap-3">
+        {levels.map((l) => (
+          <BigButton
+            key={l.id}
+            color={l.color}
+            onClick={() => {
+              if (voiceOn) speak(l.spoken[lang], lang);
+              onPick(l.id);
+            }}
+            className="py-6 text-2xl"
+          >
+            {l.label}
+          </BigButton>
+        ))}
+      </div>
+    </ScreenShell>
+  );
+}
+function NumbersTableScreen({ t, dark, lang, voiceOn, onBack }) {
+  const [tapped, setTapped] = useState(null);
+  const nums = Array.from({ length: 100 }, (_, i) => i + 1);
+  const tapNumber = (n) => {
+    setTapped(n);
+    if (voiceOn) speak(numberSpeech(n, lang), lang);
+    else SFX.click();
+  };
+  return (
+    <ScreenShell dark={dark}>
+      <TopBar onBack={onBack} title="" />
+      <h1 className="text-4xl md:text-5xl font-black text-slate-800 text-center mb-2 drop-shadow-sm">
+        1 - 100
+      </h1>
+      <p className="text-xs font-bold text-slate-500 mb-3 text-center">
+        {lang === "ms"
+          ? "Klik mana-mana nombor untuk dengar!"
+          : "Tap any number to hear it!"}
+      </p>
+      <div
+        className="w-full max-w-2xl overflow-y-auto flex-1 pb-4"
+        style={{ maxHeight: "70vh" }}
+      >
+        <div className="grid grid-cols-10 gap-1.5">
+          {nums.map((n) => (
+            <button
+              key={n}
+              onClick={() => tapNumber(n)}
+              className={`aspect-square w-full rounded-lg font-black text-white shadow active:scale-90 transition-transform flex items-center justify-center text-lg sm:text-2xl md:text-3xl ${tapped === n ? "ring-2 ring-yellow-300 scale-110" : ""}`}
+              style={{
+                backgroundColor: [
+                  COLORS.sky,
+                  COLORS.pink,
+                  COLORS.green,
+                  COLORS.orange,
+                  COLORS.yellow,
+                ][n % 5],
+              }}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      </div>
+    </ScreenShell>
+  );
+}
+function TimerScreen({ t, dark, onBack, onPick, lang, voiceOn }) {
+  const opts = [
+    { id: "30", label: t.sec30, color: COLORS.sky },
+    { id: "60", label: t.min1, color: COLORS.orange },
+    { id: "unlimited", label: t.unlimited, color: COLORS.green },
+  ];
+  return (
+    <ScreenShell dark={dark}>
+      <TopBar onBack={onBack} title={t.chooseTimer} />
+      <div className="w-full max-w-sm flex flex-col gap-3">
+        {opts.map((o) => (
+          <BigButton
+            key={o.id}
+            color={o.color}
+            onClick={() => {
+              if (voiceOn) speak(o.label, lang);
+              onPick(o.id);
+            }}
+            className="py-5 flex items-center justify-center gap-2 text-lg"
+          >
+            <Clock className="w-5 h-5" /> {o.label}
+          </BigButton>
+        ))}
+      </div>
+    </ScreenShell>
+  );
+}

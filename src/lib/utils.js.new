@@ -1,0 +1,164 @@
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+function uniqueChoices(correct, min, max, count) {
+  const set = new Set([correct]);
+  while (set.size < count) {
+    const n = randInt(min, max);
+    if (n >= 0) set.add(n);
+  }
+  return shuffle([...set]);
+}
+function numRangeForDifficulty(category, difficulty) {
+  if (category === "counting") {
+    if (difficulty === "easy") return [1, 5];
+    if (difficulty === "medium") return [5, 10];
+    return [11, 20];
+  }
+  if (category === "numbers") {
+    if (difficulty === "easy") return [1, 5];
+    if (difficulty === "medium") return [6, 10];
+    return [1, 10];
+  }
+  if (difficulty === "easy") return [1, 5];
+  if (difficulty === "medium") return [6, 10];
+  return [1, 12];
+}
+function subtractionRanges(difficulty) {
+  if (difficulty === "easy") return { aMax: 5, bMax: 5 };
+  if (difficulty === "medium") return { aMax: 10, bMax: 10 };
+  return { aMax: 15, bMax: 9 }; // hard
+}
+function additionRanges(difficulty) {
+  if (difficulty === "easy") return { aLo: 1, aHi: 5, bLo: 1, bHi: 5 };
+  if (difficulty === "medium") return { aLo: 6, aHi: 10, bLo: 1, bHi: 3 };
+  return { aLo: 1, aHi: 10, bLo: 1, bHi: 3 };
+}
+const NUMBER_WORDS = {
+  en: [
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+    "twenty",
+  ],
+  ms: [
+    "satu",
+    "dua",
+    "tiga",
+    "empat",
+    "lima",
+    "enam",
+    "tujuh",
+    "lapan",
+    "sembilan",
+    "sepuluh",
+    "sebelas",
+    "dua belas",
+    "tiga belas",
+    "empat belas",
+    "lima belas",
+    "enam belas",
+    "tujuh belas",
+    "lapan belas",
+    "sembilan belas",
+    "dua puluh",
+  ],
+};
+const NUMBER_WORDS_EXT = {
+  en: {
+    1: "one",
+    2: "two",
+    3: "three",
+    4: "four",
+    5: "five",
+    6: "six",
+    7: "seven",
+    8: "eight",
+    9: "nine",
+    10: "ten",
+    11: "eleven",
+    12: "twelve",
+    13: "thirteen",
+    14: "fourteen",
+    15: "fifteen",
+    16: "sixteen",
+    17: "seventeen",
+    18: "eighteen",
+    19: "nineteen",
+    20: "twenty",
+    30: "thirty",
+    40: "forty",
+    50: "fifty",
+    60: "sixty",
+    70: "seventy",
+    80: "eighty",
+    90: "ninety",
+    100: "one hundred",
+  },
+  ms: {
+    1: "satu",
+    2: "dua",
+    3: "tiga",
+    4: "empat",
+    5: "lima",
+    6: "enam",
+    7: "tujuh",
+    8: "lapan",
+    9: "sembilan",
+    10: "sepuluh",
+    11: "sebelas",
+    12: "dua belas",
+    13: "tiga belas",
+    14: "empat belas",
+    15: "lima belas",
+    16: "enam belas",
+    17: "tujuh belas",
+    18: "lapan belas",
+    19: "sembilan belas",
+    20: "dua puluh",
+    30: "tiga puluh",
+    40: "empat puluh",
+    50: "lima puluh",
+    60: "enam puluh",
+    70: "tujuh puluh",
+    80: "lapan puluh",
+    90: "sembilan puluh",
+    100: "seratus",
+  },
+};
+function wordFor(num, lang) {
+  if (num === 0) return lang === "ms" ? "SIFAR" : "ZERO";
+  const dict = NUMBER_WORDS_EXT[lang] || NUMBER_WORDS_EXT.en;
+  return (dict[num] || String(num)).toUpperCase();
+}
+function numberSpeech(value, lang) {
+  const n = Number(value);
+  return isNaN(n) ? String(value) : wordFor(n, lang);
+}
+function doublesWord(n, lang) {
+  return n === 6 || n === 10 ? String(n) : wordFor(n, lang);
+}
+function splitBalancedRows(count) {
+  if (count < 5) return [count, 0];
+  const top = Math.ceil(count / 2);
+  return [top, count - top];
+}
